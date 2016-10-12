@@ -1,0 +1,25 @@
+{
+  "name": "portfolio_reveal",
+  "version": "1.0.0",
+  "description": "Marina Root's online portfolio (reveal.js-based)",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/marinaroot/marinaroot.github.io.git"
+  },
+  "keywords": [
+    "reveal",
+    "portfolio",
+    "visual designer",
+    "marina root"
+  ],
+  "author": "Marina Root (marina.root@yahoo.de)",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/marinaroot/marinaroot.github.io/issues"
+  },
+  "homepage": "https://github.com/marinaroot/marinaroot.github.io#readme",
+  "devDependencies": {
+    "stylelint-config-standard": "^8.0.0"
+  }
+}

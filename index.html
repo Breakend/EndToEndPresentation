@@ -1,0 +1,453 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=900" />
+
+  <title>Peter Henderson | Community Detection in the Drosophila Connectome</title>
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/white.css">
+  <link rel="stylesheet" href="css/force.css" type="text/css">
+  <!-- Portfolio styles -->
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="$/portfolio.css">
+</head>
+
+<body>
+  <div class="header">
+    <!-- <div class="header__logo logo">
+      <a href="#/" class="logo__link"><img class="logo__image" src="$/logo_portfolio.png" alt="logo" /></a>
+    </div> -->
+    <div class="header__menu">
+      <div class="header__menu-item"><a class="header__menu-link" href="#/">Introduction</a></div><!--
+   --><div class="header__menu-item"><a class="header__menu-link" href="#/gsp">GSP</a></div><!--
+   --><div class="header__menu-item"><a class="header__menu-link" href="#/badmm">BADMM</a></div><!--
+   --><div class="header__menu-item"><a class="header__menu-link" href="#/policy">Policy</a></div><!--
+ --><div class="header__menu-item"><a class="header__menu-link" href="#/training">Training</a></div><!--
+--><div class="header__menu-item"><a class="header__menu-link" href="#/eval">Evaluation</a></div><!--
+   --><div class="header__menu-item"><a class="header__menu-link" href="#/questions">Questions?</a></div><!--
+   --><div class="header__menu-item header__menu-item_type_contact"><a class="header__menu-link" href="#/contact">Contact</a></div>
+    </div>
+  </div>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <!-- <img src="$/images_pf/face.jpg" class="face"> -->
+        <h2>End to End Learning of Deep Visuomotor Policies</h2>
+        <div>Sergey Levine, Chelsea Finn, Trevor Darrell, Pieter Abbeel</div>
+        <br/><div style="font-weight:200;" class="section-subheader">Mobile Robotics Lab - Reading Group</div>
+        <img src="http://royalvictoria.mcgill.ca/wp-content/uploads/2014/02/logo_video.png" class="face">
+      </section>
+
+      <section>
+        <h2>Intro</h2>
+        <div class="section-subheader">main idea: use deep learning to train policies from raw data input (i.e. images, known positions, etc.) to direct motor torque output</div>
+      </section>
+
+
+      <section data-background-image="$/images_pf/full_algo.png" data-background-size="500px">
+      </section>
+
+      <section id="gsp">
+        <h2>Policy Search</h2>
+        <div class="section-subheader">Complex Dynamics and Complex Policy</div>
+      </section>
+
+      <section>
+        <h2>Guided Policy Search</h2>
+        <div class="section-subheader">Complex Dynamics (Optimal Control)</div>
+        <div class="section-subheader">Complex Policy (Supervised Learning)</div>
+      </section>
+
+      <section data-background-image="$/images_pf/basic_gps.png" data-background-size="800px">
+      </section>
+
+      <section>
+        <h2>GPS: Find Guiding Trajectory Distributions for Supervised Learning</h2>
+        <div class="section-subheader">Find the widest distribution that contains close to optimal trajectories</div>
+      </section>
+
+      <section data-background-image="$/images_pf/guiding_policies.png" data-background-size="600px">
+      </section>
+
+      <section>
+        <h2>GPS: Don't stray from the policy</h2>
+        <div class="section-subheader">Want to avoid trajectories that are too different from the policy.</div>
+        <!-- <div class="section-subheader">Trajectories trained under known system, so will learn </div> -->
+      </section>
+
+      <section data-background-image="$/images_pf/alternating_optimizations.png" data-background-size="600px">
+      </section>
+
+      <section data-background-image="$/images_pf/policy_full.png" data-background-size="600px">
+      </section>
+
+      <section>
+        <h2>Formulation</h2>
+          <div>$$ \min_{p,\pi_\theta} E_p[l(\tau)]$$</div>
+          <div>$$\text{ s.t. } p(u_t|x_t) = \pi_\theta(u_t|x_t) \forall x_t,u_t, t$$</div>
+      </section>
+
+      <section data-background-image="$/images_pf/definitions.png" data-background-size="800px">
+      </section>
+
+      <section>
+        <h2>Optimization</h2>
+        <div class="section-subheader">Dual Gradient Descent [Levine et al. ICML '14] </div>
+        <div class="section-subheader">BADMM (dual descent method)[Levine et al. '15]</div>
+      </section>
+
+      <section id="badmm">
+        <h2>BADMM</h2>
+        <div class="section-subheader">Minimize Lagrangian w.r.t. primal variables</div>
+        <div class="section-subheader">Increment Lagrange multipliers by subgradient</div>
+      </section>
+
+      <section>
+        <h2>BADMM: Minimizing Lagrangian</h2>
+        <div class="section-subheader">Minimizing w.r.t. $\theta$ corresponds to supervised learning (making the policy match the trajectory distribution)</div>
+        <br/><div class="section-subheader">Minimizing with respect to $p(\tau)$ consists of one or more trajectory optimization problems </div>
+      </section>
+
+      <section>
+        <h2>BADMM: Lagrangians</h2>
+        <span style="font-size: 24px; ">
+        $$\mathcal{L}_\theta(\theta, p) = \sum_{t=1}^T E_{p(x_t, u_t)}[l(x_t, u_t)] + E_{p(x_t)\pi_\theta(u_t|x_t)}[\lambda_{x_t, u_t}] - E_{p(x_t, u_t)}[\lambda_{x_t, u_t}] + v_t \phi_t^\theta(\theta, p)$$
+        $$\mathcal{L}_p(p, \theta) = \sum_{t=1}^T E_{p(x_t, u_t)}[l(x_t, u_t)] + E_{p(x_t)\pi_\theta(u_t|x_t)}[\lambda_{x_t, u_t}] - E_{p(x_t, u_t)}[\lambda_{x_t, u_t}] + v_t \phi_t^p(\theta, p)$$
+        $$\phi_t^p(p,\theta) = E_{p(x_t)}[D_{KL}(p(u_t|x_t)||\pi_theta(u_t|x_t))]$$
+        $$\phi_t^\theta(\theta,p) = E_{p(x_t)}[D_{KL}(\pi_theta(u_t|x_t)||p(u_t|x_t))]$$
+      </span>
+      </section>
+
+
+      <section>
+        <h2>BADMM: Formulation</h2>
+
+        Replace constraint: <span class="math">\(p(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t) = \pi_\theta(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t)\)</span>
+        <span class="math">\[\theta \leftarrow \arg\min_\theta \sum_{t=1}^T \mathbb{E}_{p(\mathbf{x}_t)\pi_\theta(\mathbf{u}_t|\mathbf{x}_t)}[\lambda_{\mathbf{x}_t,\mathbf{u}_t}] + v_t\phi_t^\theta(\theta,p)\]</span>
+        <span class="math">\[p \leftarrow \arg\min_p \sum_{t=1}^T \mathbb{E}_{p(\mathbf{x}_t,\mathbf{u}_t)}[\ell(\mathbf{x}_t,\mathbf{u}_t) - \lambda_{\mathbf{x}_t,\mathbf{u}_t}] + v_t\phi_t^p(p,\theta)\]</span>
+        <span class="math">\[\lambda_{\mathbf{x}_t,\mathbf{u}_t} \leftarrow \alpha v_t(\pi_\theta(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t) - p(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t))\]</span>
+        <br/><span class="math">\(\phi_t^\theta(\theta,p) \text{ and } \phi_t^p(p,\theta)\)</span> are KL-divergence terms (Bregman constraints), <span class="math">\(\lambda_{\mathbf{x}_t,\mathbf{u}_t}\)</span> is Lagrangian multiplier, and <span class="math">\(\alpha\)</span> is step size
+      </section>
+
+      <section>
+        <h2>BADMM: Add constraint on trajectory space</h2>
+
+        Replace with first moment of distributions, gives constraint on expected action:
+        <br/><br/>$\mathbb{E}_{p(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t)}[\mathbf{u}_t] = \mathbb{E}_{\pi_\theta(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t)}[\mathbf{u}_t]$
+  </section>
+
+      <section>
+        <h2>BADMM: Add constraint on trajectory space</h2>
+
+        <br/><span class="math">\[\theta \leftarrow \arg\min_\theta \sum_{t=1}^T \mathbb{E}_{p(\mathbf{x}_t)\pi_\theta(\mathbf{u}_t|\mathbf{x}_t)}[\mathbf{u}_t^T\lambda_{\mu t}] + v_t\phi_t^\theta(\theta,p)\]</span>
+        <span class="math">\[p \leftarrow \arg\min_p \sum_{t=1}^T \mathbb{E}_{p(\mathbf{x}_t,\mathbf{u}_t)}[\ell(\mathbf{x}_t,\mathbf{u}_t) - \mathbf{u}_t^T\lambda_{\mu t}] + v_t\phi_t^p(p,\theta)\]</span>
+        <span class="math">\[\lambda_{\mathbf{x}_t,\mathbf{u}_t} \leftarrow \alpha v_t(\mathbb{E}_{p(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t)}[\mathbf{u}_t] - \mathbb{E}_{\pi_\theta(\mathbf{u}_t|\mathbf{x}_t)p(\mathbf{x}_t)}[\mathbf{u}_t])\]</span>
+      </section>
+
+
+      <section>
+        <h2>BADMM: Assumptions and guarantees</h2>
+        <ul>
+          <li>Assumes noise (dynamics) somewhat small to constrain on moment</li>
+          <li>Guarantees convergence since formulation of BADMM</li>
+          <li>$p(\tau)$ is a mixture of $N$ Gaussians $p_i(\tau)$ (one for each initial starting sample $x_1^i$)</li>
+          <li>Sufficiently tolerant to noise in real-world systems</li>
+          <li>Assumes $\pi_\theta(u_t|o_t)$ conditionally Gaussian</li>
+        </ul>
+      </section>
+
+      <section data-background-image="$/images_pf/policy_full.png" data-background-size="600px">
+      </section>
+
+      <section>
+        <h2>Optimizing Trajectories for Unknown Dynamics</h2>
+        <div class="section-subheader">Want to prevent diverging trajectory distributions</div>
+        <div class="section-subheader">$$ \min_{p(\tau) \in \mathcal{N}(\tau)} \mathcal{L}_p(p, \theta)$$</div>
+        <div> $$\text{ s.t. } D_{KL} (p(\tau)|| \hat{p}(\tau)) \le \epsilon$$</div>
+        <br/>
+        <div>Update modified trajectory distribution again through LQR backpass in inner loop.</div>
+      </section>
+
+      <section data-background-image="$/images_pf/policy_full.png" data-background-size="600px">
+      </section>
+
+      <section>
+        <h2>Controller and Dynamics</h2>
+        <div>Time-varying Linear Gaussians</div>
+        <div>$$p(u_t|x_t) = \mathcal{N}(K_tx_t + k_t, C_t)$$</div>
+        <div>$$p(x_{t+1}|x_t, u_t) = \mathcal{N}(f_{xt}x_t + f_{ut}u_t + f_{ct}, F_{t})$$</div>
+        <div>See <a href="https://en.wikipedia.org/wiki/Linear-quadratic-Gaussian_control">here</a> for more detail on LQGC.</a>
+      </section>
+
+      <section data-background-image="$/images_pf/policy_full.png" data-background-size="600px">
+      </section>
+
+      <section>
+        <h2>Fitting the controller and dynamics</h2>
+        <div>Fit dynamics through modified linear regression, fit controller through LQR backpass (Levine and Koltun, 2013a)</div>
+        <div>Optimal controller given by:</div>
+        <div>$$ p(u_t|x_t) = \mathcal{N}(K_tx_t + k_t; Q^{−1}_{u,ut})$$</div>
+      </section>
+
+      <section id="policy">
+        <h2>Visuomotor Policy</h2>
+        Train via Stochastic Gradient Descent, typical in neural networks
+        <br/><br/>
+        Include samples from previous iterations with importance sampling to widen training set.
+      </section>
+
+      <section>
+        <h2>Visuomotor Policy</h2>
+        <ul>
+        <li>Minimize KL-divergence between policy and trajectory distribution</li>
+        <li>Minimize Lagrange multiplier of expected action <span class="math">\(\lambda_{\mu t}\)</span></li>
+        </ul>
+
+
+        <span class="math">\[\mathcal{L}_\theta(\theta, p)=\frac{1}{2N}\sum_{n=1}^N\sum_{t=1}^T \mathbb{E}_{p_i(\mathbf{x}_t,\mathbf{o}_t)}[\mathbf{tr}[\mathbf{C}_{t_i}^{-1}\Sigma^\pi(\mathbf{o}_t)]\\-\log|\Sigma^\pi(\mathbf{o}_t)|\\ +
+        (\mu^\pi(\mathbf{o}_t) - \mu_{t_i}^p(\mathbf{x}_t))\mathbf{C}_{t_i}^{-1}(\mu^\pi(\mathbf{o}_t) - \mu_{t_i}^p(\mathbf{x}_t))\\+ 2\lambda_{\mu t}^T\mu^\pi(\mathbf{o}_t)]\]</span>
+
+      </section>
+
+      <section>
+        <h2>Intuitive explanation</h2>
+        Objective is weighted quadratic loss on the difference between the policy mean and the mean action of the trajectory distribution, offset by the Lagrange multiplier.
+        <br><br/>
+        Objective penalizes deviation from the trajectory distribution, with a penalty that is locally proportional to its cost-to-go.
+      </section>
+
+      <section>
+      <h3 id="architecture">Visuomotor Policy Architecture</h3>
+      <ul>
+      <li>Inputs are monocular RGB images</li>
+      <li>3-Layer Convolutional Neural Network with Rectified Linear Units</li>
+      <li>No pooling to conserve location information</li>
+      <li>Spatial softmax <span class="math">\(e^{a_{cij}}/\sum_{i&#39;j&#39;}e^{a_{ci&#39;j&#39;}}\)</span> produces distribution over locations of <em>task-specific</em> visual features</li>
+      <li>Concatenate with robot configuration through Fully Connected ReLU layers to linear motor torque layer</li>
+      </ul>
+      </section>
+
+      <section data-background-image="$/images_pf/convnet.png" data-background-size="1000px">
+      </section>
+
+      <section id="training">
+        <h2>Visuomotor Policy Training</h2>
+        Guided policy search phase trained under known conditons.<br/><br/>Robot controls position of the object, not included in final policy inputs.
+      </section>
+
+      <section>
+        <h2>Visuomotor Pretraining: Convnet</h2>
+        <ul>
+          <li>The robot moves the target object through a range of random positions, recording camera images and the object’s pose.</li>
+          <li>This dataset is used to train a pose regression CNN, same layers as policy, followed by a fully connected layer to predict pose</li>
+          <li>Further pretrain pose regression CNN with ImageNet</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Visuomotor Pretraining: Linear-Gaussian controllers </h2>
+        <ul>
+        <li>15 iterations of GPs without optimizing the visuomotor policy</li>
+        <li>replace the visuomotor policy during these iterations with a small network that receives the full state, which consisted of two layers with 40 RELU hidden units</li>
+        <li>Helps prevent divergence</li>
+      </section>
+
+      <section data-background-image="$/images_pf/pretraining.png" data-background-size="500px">
+      </section>
+
+      <section id="eval">
+        <h2>Evaluation</h2>
+      </section>
+
+      <section data-background-image="$/images_pf/comparison_controllers.png" data-background-size="800px">
+      </section>
+
+      <section data-background-image="$/images_pf/comparison_nn_policy_controllers.png" data-background-size="800px">
+      </section>
+
+      <section>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/h3oqNJwlyOM?controls=1&showinfo=0&autohide=1" frameborder="0" allowfullscreen></iframe>
+      </section>
+
+      <section>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/CE6fBDHPbP8?controls=1&showinfo=0&autohide=1" frameborder="0" allowfullscreen></iframe>
+      </section>
+
+      <section>
+        <h2>Possible Uses<br/>@ MRL</h2>
+        <ul>
+          <li>Coral Following</li>
+          <li>Vision Based Swimming (track diver or move as convoy)</li>
+          <li>Recreating Video Footage</li>
+          <li>Learning actions from video</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>More detailed explanations of algorithms/experiments</h2>
+        <ul style="font-size: 20px; font-weight:200;">
+          <li>Marvin Zhang, Zoe McCarthy, Chelsea Finn, Sergey Levine, Pieter Abbeel. Learning Deep Neural Network Policies with Continuous Memory States. ICRA 2016.</li>
+          <li>Chelsea Finn, Xin Yu Tan, Yan Duan, Trevor Darrell, Sergey Levine, Pieter Abbeel. Deep Spatial Autoencoders for Visuomotor Learning. ICRA 2016.</li>
+          <li>Sergey Levine, Nolan Wagener, Pieter Abbeel. Learning Contact-Rich Manipulation Skills with Guided Policy Search. ICRA 2015.</li>
+          <li>Sergey Levine, Pieter Abbeel. Learning Neural Network Policies with Guided Policy Search under Unknown Dynamics. NIPS 2014.</li>
+        </ul>
+      </section>
+
+      <section id="questions">
+        <h2>Questions?</h2>
+      </section>
+
+      <section id="contact">
+        <h2>Contact</h2>
+        <div class="section-subheader">
+          Any later questions, you can ask them by email!
+          <br/><span style="font-size: 10pt;">(Or don't.)</span>
+          <br><a class="contact-link contact-link_type_email" href="mailto:peter.henderson@mail.mcgill.ca">peter.henderson@mail.mcgill.ca</a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="navigation-hint">use arrow keys<br>to navigate</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/0.96/head.min.js"></script>
+  <script src="js/reveal.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="js/d3.min.js"></script>
+  <script type="text/javascript" src="js/d3.geom.min.js"></script>
+  <script type="text/javascript" src="js/d3.layout.min.js"></script>
+  <script type="text/javascript" src="js/force.js"></script>
+  <script>
+    // window.onresize = function(event) {
+    //   console.log('I am resized!', window.innerWidth, window.innerHeight);
+    // };
+
+    var numberOfPixels = 0;
+
+    var $navigationHint = $('.navigation-hint');
+
+    var $allMenuItems = $('.header__menu-item');
+    // console.log('all menu items', $allMenuItems);
+
+    var selectCurrentMenuItem = function() {
+
+      var currentHash = window.location.hash;
+      // console.log('location change !!!!', currentHash);
+
+      // numberOfPixels = numberOfPixels + 1;
+      // document.body.style = 'border: ' + numberOfPixels + 'px solid red';
+      //
+      // $('.header__menu-link, h2').css({
+      //   'border': numberOfPixels + 'px solid red'
+      // });
+
+      // $allMenuItems.css({
+      //   'outline': '1px solid red'
+      // }).toggleClass('haha');
+
+      $allMenuItems.removeClass('header__menu-item_state_current');
+
+      $currentMenuItem = $allMenuItems.filter(function(index, element) {
+        var linkHref = $(element).find('a').attr('href');
+        // console.log('checking filter', index, element, linkHref);
+        var shouldMakeCurrent = linkHref == currentHash;
+        if (linkHref != '#/') {
+          shouldMakeCurrent = currentHash.indexOf(linkHref) == 0;
+        }
+        return shouldMakeCurrent;
+      });
+      $currentMenuItem.addClass('header__menu-item_state_current')
+
+      // Toggle navigation hint
+      if (currentHash == '#/') {
+        $navigationHint.show();
+      } else {
+        $navigationHint.hide();
+      }
+
+      // Toggle navigation hint (alternative solution)
+      // var needToShowNavigationHint = false;
+      // if (currentHash == '#/') {
+      //   needToShowNavigationHint = true;
+      // }
+      // $('.navigation-hint').toggle(needToShowNavigationHint);
+
+      // trackPageView();
+    };
+
+    window.onhashchange = selectCurrentMenuItem;
+    selectCurrentMenuItem();
+
+    // More info https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+      history: true,
+
+        math: {
+            mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+            config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+
+        dependencies: [
+            { src: 'js/math.js', async: true }
+        ]
+      // // More info https://github.com/hakimel/reveal.js#dependencies
+      // dependencies: [{
+      //   src: 'plugin/markdown/marked.js'
+      // }, {
+      //   src: 'plugin/markdown/markdown.js'
+      // }, {
+      //   src: 'plugin/notes/notes.js',
+      //   async: true
+      // }, {
+      //   src: 'plugin/highlight/highlight.js',
+      //   async: true,
+      //   callback: function() {
+      //     hljs.initHighlightingOnLoad();
+      //   }
+      // }]
+    });
+  </script>
+
+
+  <script>
+    // Load the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/player_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    // Replace the 'ytplayer' element with an <iframe> and
+    // YouTube player after the API code downloads.
+    var player;
+    function onYouTubePlayerAPIReady() {
+      player = new YT.Player('ytplayer', {
+        width: '920',
+        height: '490',
+        videoId: 'F4lc9cY4fMM',
+        playerVars: {
+          'wmode': 'opaque',
+          'autoplay': 1,
+          'controls': 0 ,
+          'showinfo': 0,
+          'start': 20,
+          'rel': 0,
+          'loop': 1,
+        },
+        events:{
+          'onReady':onPlayerReady
+        }
+     });
+    }
+    function onPlayerReady(event) {
+      event.target.mute();
+    }
+
+//     Reveal.addEventListener( 'slidechanged', function( event ) {
+//     MathJax.Hub.Rerender();
+// } );
+  </script>
+
+</body>
+
+</html>

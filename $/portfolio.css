@@ -1,0 +1,213 @@
+body {
+  font-family: 'Abel', sans-serif;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  font-family: 'Abel', sans-serif;
+  font-weight: 700;
+  text-transform: none;
+
+}
+
+.reveal h2{
+  color: #A61919;
+}
+
+.header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+
+.header__logo {
+  z-index: 100;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.header__menu {
+  position: absolute;
+  left: 150px;
+  right: 35px;
+  top: 20px;
+  text-align: right;
+}
+
+.header__menu-item {
+  border: 1px solid transparent;
+  padding: 10px;
+  display: inline-block;
+}
+
+.header__menu-link {
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  padding: 5px 2.5px 3px;
+  text-decoration: none;
+  color: black;
+  font-size: 1em;
+}
+
+.header__menu-link:hover,
+.header__menu-item_state_current .header__menu-link {
+  border-bottom-color: #000;
+}
+
+.header__menu-item_type_contact {
+  margin-left: 15px;
+  padding: 0;
+}
+
+.header__menu-item_type_contact .header__menu-link {
+  color: black;
+  padding: 12px;
+  border: 1.5px solid black;
+}
+
+.header__menu-item_type_contact .header__menu-link:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.header__menu-item_type_contact.header__menu-item_state_current .header__menu-link {
+  background: black;
+  color: white;
+}
+
+/* ================== */
+.logo {
+}
+
+.logo__link {
+  display: inline-block;
+}
+
+.logo__image {
+  width: 80px;
+  padding-left: 20px;
+}
+
+body,
+.reveal .slide-background {
+  background-color: whitesmoke;
+  text-align: left;
+}
+
+.reveal .slide-background .element1 {
+  z-index: 700;
+  position: absolute;
+  background-position: center;
+  height: 110%;
+}
+
+.reveal .controls .enabled {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.reveal .controls .navigate-left.enabled:hover {
+  border-right-color: black;
+}
+
+.reveal .controls .navigate-left,
+.reveal .controls .navigate-left.enabled {
+  border-right-color: #62606f;
+}
+
+.reveal .controls .navigate-right,
+.reveal .controls .navigate-right.enabled {
+  border-left-color: #62606f;
+}
+
+.reveal .controls .navigate-right.enabled:hover {
+  border-left-color: black;
+}
+
+.reveal .controls .navigate-down,
+.reveal .controls .navigate-down.enabled {
+  border-top-color: #62606f;
+}
+
+.reveal .controls .navigate-down.enabled:hover {
+  border-top-color: black;
+}
+
+.reveal .controls .navigate-up,
+.reveal .controls .navigate-up.enabled {
+  border-bottom-color: #62606f;
+}
+
+.reveal .controls .navigate-up.enabled:hover {
+  border-bottom-color: black;
+}
+
+.reveal .progress {
+  pointer-events: none;
+}
+
+.reveal .progress span {
+  background: #62606f;
+}
+
+.reveal .controls .navigate-left {
+  top: 42px;
+}
+
+.reveal .controls .navigate-right {
+  left: 65px;
+  top: 42px;
+}
+
+.reveal .controls button {
+  border: 10px solid transparent;
+}
+
+.reveal .controls .navigate-down {
+  left: 38px;
+  top: 69px;
+}
+
+.reveal .controls .navigate-up {
+  left: 38px;
+  top: 4px;
+}
+
+.reveal a {
+  color: black;
+  border-bottom: 1.7px solid rgba(0, 0, 0, 0.1);
+}
+
+.reveal a:hover {
+  border-bottom: solid #000 1.7px;
+  color: black;
+}
+
+.face {
+  width: 3em;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.navigation-hint {
+  position: fixed !important;
+  bottom: 70px;
+  right: 130px;
+  padding: 0 20px 15px 0;
+  background: url(images_pf/arrow.png) no-repeat right bottom;
+}
+
+.contact-link {
+  display: inline-block;
+  font-size: 0.7em !important;
+  margin-top: 0.3em !important;
+}
+
+.contact-link_type_email {
+  margin-top: 0.8em !important;
+}
